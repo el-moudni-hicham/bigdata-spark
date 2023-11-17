@@ -29,18 +29,19 @@ RDDs are a fundamental data structure of Apache Spark. They are fault-tolerant c
 
 ## Prerequisites
 
-  * Spark
-    
-      - dependency :
-        
-      ```maven
-        <dependency>
-              <groupId>org.apache.spark</groupId>
-              <artifactId>spark-core_2.13</artifactId>
-              <version>3.4.1</version>
-          </dependency>
-      ```
-  * Java
+* Spark
+  
+  Add this maven dependency to `pom.xml` file:
+
+  ```maven
+  <dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-core_2.13</artifactId>
+    <version>3.4.1</version>
+  </dependency>
+  ```
+  
+* Java
 
 ## Applications
 
@@ -52,19 +53,23 @@ This project demonstrates the use of Spark RDDs for counting words in large text
 * Usage:
 
 ```java
-public class WordCount {
-    public static void main(String[] args) {
-        SparkConf conf=new SparkConf().setAppName("Word Count").setMaster("local");
-        JavaSparkContext sc=new JavaSparkContext(conf);
-        JavaRDD<String> rddLines=sc.textFile("src/main/resources/words.txt");
-        JavaRDD<String> rddWords=rddLines.flatMap(line-> Arrays.asList(line.split(" ")).iterator());
-        JavaPairRDD<String,Integer> pairRDDWords=rddWords.mapToPair(word->new Tuple2<>(word,1));
-        JavaPairRDD<String,Integer> wordCount=pairRDDWords.reduceByKey((a,b)->{
-            return a+b;});
-        wordCount.foreach(e-> System.out.println(e._1+" "+e._2));
-    }
-}
+SparkConf conf=new SparkConf().setAppName("Word Count").setMaster("local");
+JavaSparkContext sc=new JavaSparkContext(conf);
+JavaRDD<String> rddLines=sc.textFile("src/main/resources/words.txt");
 ```
+
+![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/0b26b3d4-6592-434e-a7a0-4c3f525ba3af)
+
+```java
+JavaRDD<String> rddWords=rddLines.flatMap(line-> Arrays.asList(line.split(" ")).iterator());
+JavaPairRDD<String,Integer> pairRDDWords=rddWords.mapToPair(word->new Tuple2<>(word,1));
+JavaPairRDD<String,Integer> wordCount=pairRDDWords.reduceByKey((a,b)-> a+b);
+wordCount.foreach(e-> System.out.println(e._1+" "+e._2));
+```
+
+![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/d121c05f-8fcb-414d-b58d-c58c2d2dd7aa)
+
+
 ### RDDS Graph 
 
 * Description:
@@ -248,5 +253,41 @@ This project involves the analysis of large-scale climate data using Apache Spar
 
 * Usage:
 
-  
+```java
+SparkConf conf=new SparkConf().setAppName("Climat Analysis").setMaster("local[*]");
+JavaSparkContext sc=new JavaSparkContext(conf);
+JavaRDD<String> rddLines=sc.textFile("src/main/resources/2020.csv");
+```
+
+![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/c1f84c3e-07e7-47cf-a72e-84742ae890ce)
+
+
+```java
+        JavaPairRDD<String, Double> rddT=rddLines.mapToPair(line -> {
+            String[] split = line.split(",");
+            return new Tuple2<>(split[2], Double.parseDouble(split[3]));
+        });
+
+        JavaPairRDD<String, Double> rddTMIN = rddT.filter(pair -> pair._1.contains("TMIN"));
+        JavaPairRDD<String, Double> rddTMAX = rddT.filter(pair -> pair._1.contains("TMAX"));
+
+        int TMINSize = rddTMIN.collect().size();
+        int TMAXSize = rddTMAX.collect().size();
+
+        JavaPairRDD<String, Double> rddSumTMIN = rddTMIN.reduceByKey((x,y) -> x+y);
+        JavaPairRDD<String, Double> rddSumTMAX = rddTMAX.reduceByKey((x,y) -> x+y);
+
+        rddSumTMIN.foreach(e -> System.out.println(e._1 + " " + e._2/TMINSize));
+        rddSumTMIN.foreach(e -> System.out.println(e._1 + " " + e._2/TMAXSize));
+
+        JavaPairRDD<String, Double> rddMeanTMIN = rddSumTMIN.mapValues(x -> (x / TMINSize));
+        System.out.println(rddMeanTMIN.collect().get(0));
+        JavaPairRDD<String, Double> rddMeanTMAX = rddSumTMAX.mapValues(x -> (x / TMAXSize));
+        System.out.println(rddMeanTMAX.collect().get(0));
+```
+
+![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/7624da13-bd0a-4d3f-9581-3774e9a7063b)
+
+![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/852bed36-10fb-4b69-945a-fbd69765cb3c)
+
 
