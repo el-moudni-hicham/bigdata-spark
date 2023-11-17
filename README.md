@@ -276,10 +276,9 @@ The data set contains the attributes ID, date, element, value, m-flag, q-flag, s
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/c1f84c3e-07e7-47cf-a72e-84742ae890ce)
 
 
-Display the following statistics for 2020:
-
-Average minimum temperature.
-Average maximum temperature.
+> Display the following statistics for 2020:
+ * Average minimum temperature.
+ * Average maximum temperature.
 
 ```java
         JavaPairRDD<String, Double> rddT=rddLines.mapToPair(line -> {
