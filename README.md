@@ -60,6 +60,8 @@ JavaRDD<String> rddLines=sc.textFile("src/main/resources/words.txt");
 
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/0b26b3d4-6592-434e-a7a0-4c3f525ba3af)
 
+> Count words occurences in a text file :
+
 ```java
 JavaRDD<String> rddWords=rddLines.flatMap(line-> Arrays.asList(line.split(" ")).iterator());
 JavaPairRDD<String,Integer> pairRDDWords=rddWords.mapToPair(word->new Tuple2<>(word,1));
@@ -75,8 +77,13 @@ wordCount.foreach(e-> System.out.println(e._1+" "+e._2));
 * Description:
 This project is to create an RDD Graph.
 
+* Usage :
+
+> Consider the following graph that represents the lineage of RDDs:
+
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/5ef12fc2-66ef-4908-b8ad-7ebc8a208c1b)
 
+> The first RDD (RDD1) is created by parallelizing a collection containing the names of students. Write a Spark application that allows you to implement this lineage :
 ```java
 List<String> students = Arrays.asList("hicham", "adam", "ahmed", "mohamed", "amine",
                 "abdeljalil", "soufiane", "ayoub", "anir", "ayour", "anwar", "mariam");
@@ -194,16 +201,14 @@ rdd10.foreach(name -> System.out.println(name+","));
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/ec04869c-505f-4e8c-8b39-8c58c1ff78d6)
 
 
-
-* Usage:
-
-
 ### Sales Analysis 
 
 * Description:
 The Sales Analysis Spark project focuses on analyzing sales data using Spark RDDs.
 
 * Usage:
+
+> We want to develop a Spark application that analyze salesfrom an input text file (sales.csv) containing the sales of a company in different cities. 
 
 ```java
 SparkConf conf=new SparkConf().setAppName("Sales Counter").setMaster("local");
@@ -213,6 +218,7 @@ JavaRDD<String> rddLines=sc.textFile("src/main/resources/sales.csv");
 
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/13cf8958-7499-4e0d-8bc5-1d412cff236a)
 
+> Determines the total sales by city :
 
 ```java
         JavaPairRDD<String,Integer> pairRDDCities=rddLines.mapToPair(line->{
@@ -225,6 +231,8 @@ JavaRDD<String> rddLines=sc.textFile("src/main/resources/sales.csv");
 ```
 
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/f243b3fa-8299-4a80-82be-290712c1885f)
+
+> Calculate the total price of product sales by city for a given year :
 
 ```java
         JavaPairRDD<String, Integer> pricePairs = rddLines
@@ -253,14 +261,25 @@ This project involves the analysis of large-scale climate data using Apache Spar
 
 * Usage:
 
+> we want to analyze meteorological data provided by NCEI (National Centers for Environmental Information) using Spark :
+
 ```java
 SparkConf conf=new SparkConf().setAppName("Climat Analysis").setMaster("local[*]");
 JavaSparkContext sc=new JavaSparkContext(conf);
 JavaRDD<String> rddLines=sc.textFile("src/main/resources/2020.csv");
 ```
 
+> The dataset is made available to the public by NCEI. The data set split by year can be downloaded from the following [link](https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/)
+
+The data set contains the attributes ID, date, element, value, m-flag, q-flag, s-flag, OBS-TIME
+
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/c1f84c3e-07e7-47cf-a72e-84742ae890ce)
 
+
+Display the following statistics for 2020:
+
+Average minimum temperature.
+Average maximum temperature.
 
 ```java
         JavaPairRDD<String, Double> rddT=rddLines.mapToPair(line -> {
@@ -286,7 +305,11 @@ JavaRDD<String> rddLines=sc.textFile("src/main/resources/2020.csv");
         System.out.println(rddMeanTMAX.collect().get(0));
 ```
 
+> Average minimum temperature.
+
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/7624da13-bd0a-4d3f-9581-3774e9a7063b)
+
+> Average maximum temperature .
 
 ![image](https://github.com/el-moudni-hicham/bigdata-spark-rdd/assets/85403056/852bed36-10fb-4b69-945a-fbd69765cb3c)
 
